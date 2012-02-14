@@ -82,7 +82,7 @@ class ParanoiaTest < Test::Unit::TestCase
 
     assert_equal false, model.deleted_at.nil?
 
-    assert_equal 0, model.class.count
+    assert_equal 1, model.class.count
   end
 
   def test_only_destroyed_scope_for_paranoid_models
@@ -127,22 +127,28 @@ class ParanoiaTest < Test::Unit::TestCase
   def test_real_destroy_lt
     model = ParanoidModel.new
     model.save
-    model.destroy!
+    model.destroy
     
-    assert_equal false, ParanoidModel.all.exists?(model.id)
+    assert_equal true, ParanoidModel.all.include?(model)
+    assert_equal true, ParanoidModel.only_deleted.include?(model)
   end
   
   def test_real_delete
     model = ParanoidModel.new
     model.save
-    model.delete!
+    model.delete
     
-    assert_equal false, ParanoidModel.all.exists?(model.id)
+    assert_equal true, ParanoidModel.all.include?(model)
+    assert_equal true, ParanoidModel.only_deleted.include?(model)
   end
 
- # def test_active_scope
- #   model = 
- # end
+  def test_active_scope
+    model = ParanoidModel.new
+    model.save
+
+    assert_equal true, ParanoidModel.active.include?(model)
+  end
+ 
   private
   def get_featureful_model
     FeaturefulModel.new(:name => "not empty")
