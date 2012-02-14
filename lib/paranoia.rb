@@ -6,6 +6,9 @@ module Paranoia
   module Query
     def paranoid? ; true ; end
 
+    def active
+       where("deleted_at is null")
+    end
     def only_deleted
       unscoped {
         where("deleted_at is not null")

@@ -61,16 +61,15 @@ class ParanoiaTest < Test::Unit::TestCase
   end
 
   def test_destroy_behavior_for_paranoid_models_lt
-    model = ParanoidModel.new
-    assert_equal 0, model.class.count
-    model.save!
-    assert_equal 1, model.class.count
-    model.destroy
+    lt_model = ParanoidModel.new
+    lt_model.save!
+    assert_equal 2, lt_model.class.count
+    lt_model.destroy
 
-    assert_equal false, model.deleted_at.nil?
-    assert model.frozen?
+    assert_equal false, lt_model.deleted_at.nil?
+    assert lt_model.frozen?
 
-    assert_equal 1, model.class.count
+    assert_equal 2,lt_model.class.count
   end
 
   def test_destroy_behavior_for_featureful_paranoid_models_lt
@@ -143,10 +142,10 @@ class ParanoiaTest < Test::Unit::TestCase
   end
 
   def test_active_scope
-    model = ParanoidModel.new
-    model.save
+    active_model = ParanoidModel.new
+    active_model.save
 
-    assert_equal true, ParanoidModel.active.include?(model)
+    assert_equal true, ParanoidModel.active.include?(active_model)
   end
  
   private
