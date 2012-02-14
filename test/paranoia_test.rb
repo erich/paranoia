@@ -1,3 +1,8 @@
+#When there is test method ending with lt it means that was rewritten to LoveThis behavior
+# 
+# These are our changes
+# - we don't want default scope
+# - we want scope active which have not deleted records
 require 'test/unit'
 require 'active_record'
 require File.expand_path(File.dirname(__FILE__) + "/../lib/paranoia")
@@ -55,7 +60,7 @@ class ParanoiaTest < Test::Unit::TestCase
     assert_equal 0, model.class.unscoped.count
   end
 
-  def test_destroy_behavior_for_paranoid_models
+  def test_destroy_behavior_for_paranoid_models_lt
     model = ParanoidModel.new
     assert_equal 0, model.class.count
     model.save!
@@ -65,12 +70,10 @@ class ParanoiaTest < Test::Unit::TestCase
     assert_equal false, model.deleted_at.nil?
     assert model.frozen?
 
-    assert_equal 0, model.class.count
-    assert_equal 1, model.class.unscoped.count
-
+    assert_equal 1, model.class.count
   end
 
-  def test_destroy_behavior_for_featureful_paranoid_models
+  def test_destroy_behavior_for_featureful_paranoid_models_lt
     model = get_featureful_model
     assert_equal 0, model.class.count
     model.save!
@@ -80,7 +83,6 @@ class ParanoiaTest < Test::Unit::TestCase
     assert_equal false, model.deleted_at.nil?
 
     assert_equal 0, model.class.count
-    assert_equal 1, model.class.unscoped.count
   end
 
   def test_only_destroyed_scope_for_paranoid_models
@@ -122,12 +124,12 @@ class ParanoiaTest < Test::Unit::TestCase
     assert_equal false, model.destroyed?
   end
   
-  def test_real_destroy
+  def test_real_destroy_lt
     model = ParanoidModel.new
     model.save
     model.destroy!
     
-    assert_equal false, ParanoidModel.unscoped.exists?(model.id)
+    assert_equal false, ParanoidModel.all.exists?(model.id)
   end
   
   def test_real_delete
@@ -135,9 +137,12 @@ class ParanoiaTest < Test::Unit::TestCase
     model.save
     model.delete!
     
-    assert_equal false, ParanoidModel.unscoped.exists?(model.id)
+    assert_equal false, ParanoidModel.all.exists?(model.id)
   end
 
+ # def test_active_scope
+ #   model = 
+ # end
   private
   def get_featureful_model
     FeaturefulModel.new(:name => "not empty")
